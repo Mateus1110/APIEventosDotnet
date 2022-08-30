@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using UltraEventos.API.Data;
 using UltraEventos.API.Models;
 
 namespace UltraEventos.API.Controllers
@@ -12,40 +13,22 @@ namespace UltraEventos.API.Controllers
     [Route("api/[controller]")]
     public class EventoController : ControllerBase
     {
+        private readonly DataContext _context;
 
-        public IEnumerable<Evento> _evento = new Evento[] {
-            new Evento() {
-                EventoId = 1,
-                Tema = "TEMAAAAA",
-                Local = "Belo Horizonte",
-                Lote = "1",
-                QtdPessoas = 250,
-                DataEvento = DateTime.Now.AddDays(2).ToString(),
-                imagemURL = "imagem.url"
-            },
-            new Evento() {
-                EventoId = 2,
-                Tema = "TEMAAAAA222",
-                Local = "Belo Horizonte",
-                Lote = "2",
-                QtdPessoas = 220,
-                DataEvento = DateTime.Now.AddDays(2).ToString(),
-                imagemURL = "imagem2.url"
-            }
-        };
-        public EventoController()
+        public EventoController(DataContext context)
         {
-
+            _context = context;
         }
 
         [HttpGet]
         public IEnumerable<Evento> Get() {
-            return _evento;
+            return _context.Eventos;
         }
 
         [HttpGet("{id}")]
-        public IEnumerable<Evento> GetById(int id) {
-            return _evento.Where(evento => evento.EventoId == id);
+        public Evento GetById(int id) {
+            return _context.Eventos.FirstOrDefault(
+                evento => evento.EventoId == id);
         }
 
         [HttpPost]
